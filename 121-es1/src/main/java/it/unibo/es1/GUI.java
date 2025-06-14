@@ -39,5 +39,4 @@ public class GUI extends JFrame{
 		
 		this.setVisible(true);
 	}
-
 }
