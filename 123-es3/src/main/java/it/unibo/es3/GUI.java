@@ -8,26 +8,36 @@ import java.util.List;
 
 public class GUI extends JFrame {
     
-    private final List<JButton> cells = new ArrayList<>();
+    private final Map<Pair<Integer,Integer>,JButton> map = new HashMap<>();
+    private final LogicImpl logic;
     
     public GUI(int width) {
+        logic=new LogicImpl(width);
+
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(70*width, 70*width);
-        
+
+        ActionListener al = e -> {
+            for(Pair<Integer,Integer> p:logic.toStar(new HashMap<>(map))){
+                map.get(p).setText("*");
+            }
+        };
+
         JPanel panel = new JPanel(new GridLayout(width,width));
         this.getContentPane().add(panel);
-        
-        ActionListener al = e -> {
-            var jb = (JButton)e.getSource();
-        	jb.setText(String.valueOf(cells.indexOf(jb)));
-        };
-                
+
+        JButton go= new JButton(">");
+        this.getContentPane().add(go,BorderLayout.SOUTH);
+        go.addActionListener(al);
+
+        Set<Pair<Integer,Integer>> randomStart= logic.init();
         for (int i=0; i<width; i++){
             for (int j=0; j<width; j++){
-            	var pos = new Pair<>(j,i);
-                final JButton jb = new JButton(pos.toString());
-                this.cells.add(jb);
-                jb.addActionListener(al);
+                final JButton jb = new JButton();
+                this.map.put(new Pair<>(i,j),jb);
+                if(randomStart.contains(new Pair<>(i,j))){
+                    jb.setText("*");
+                }
                 panel.add(jb);
             }
         }
